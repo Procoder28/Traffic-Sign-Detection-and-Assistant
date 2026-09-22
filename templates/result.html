@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection Results - AI Traffic Sign Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="brand">
+            <div class="brand-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polygon points="12 2 2 22 22 22 12 2"></polygon>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <span>Traffic Sign Assistant AI</span>
+        </div>
+        <a href="{{ url_for('index') }}" class="btn-primary" style="background: rgba(255, 255, 255, 0.2); font-size: 0.85rem; padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3);">
+            &larr; Upload Another File
+        </a>
+    </header>
+
+    <div class="container">
+        <!-- Results Title -->
+        <section class="hero-section" style="margin-bottom: 1.75rem;">
+            <h1 class="hero-title">YOLOv8 Detection & Interpretation Results</h1>
+            <p class="hero-subtitle">Automated traffic sign identification, knowledge base retrieval, and driver action recommendations.</p>
+        </section>
+
+        <!-- Main Dashboard Split Grid -->
+        <div class="result-grid">
+            
+            <!-- Left Side: Bounding Box Annotated Media Output -->
+            <div class="media-card">
+                <div class="media-header">
+                    <div class="media-title">
+                        {% if data.media_type == 'image' %}
+                            Processed Image Visualizer
+                        {% else %}
+                            Processed Video Player
+                        {% endif %}
+                    </div>
+                    <span class="conf-pill">YOLOv8 Bounding Boxes</span>
+                </div>
+
+                <div class="output-media-container">
+                    {% if data.media_type == 'image' %}
+                        <img src="{{ data.processed_url }}" alt="Annotated Traffic Sign Output">
+                    {% else %}
+                        <video controls autoplay loop muted>
+                            <source src="{{ data.processed_url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% endif %}
+                </div>
+
+                <div style="margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                    <span>File: {{ data.filename }}</span>
+                    <span>Status: Analysis Complete</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Analysis Panel & Sign Cards -->
+            <div class="analysis-panel">
+                
+                <!-- Quick Stats Header -->
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <span class="stat-num">{{ data.total_signs }}</span>
+                        <span class="stat-label">Signs Detected</span>
+                    </div>
+                    <div style="width: 1px; height: 35px; background: var(--border-color);"></div>
+                    <div class="stat-item">
+                        <span class="stat-num" style="color: var(--primary-light);">YOLOv8</span>
+                        <span class="stat-label">Model Engine</span>
+                    </div>
+                    <div style="width: 1px; height: 35px; background: var(--border-color);"></div>
+                    <div class="stat-item">
+                        <span class="stat-num" style="color: #16A34A;">Active</span>
+                        <span class="stat-label">Knowledge Base</span>
+                    </div>
+                </div>
+
+                <h3 style="font-weight: 700; font-size: 1.2rem; color: var(--text-main);">
+                    Detected Sign Analysis & Driver Guidance
+                </h3>
+
+                <!-- Detections List -->
+                {% if data.detections and data.detections|length > 0 %}
+                    <div class="sign-cards-list">
+                        {% for sign in data.detections %}
+                            <div class="sign-card">
+                                <div class="sign-header">
+                                    <div>
+                                        <h4 class="sign-name">{{ sign.display_name }}</h4>
+                                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+                                            Category: {{ sign.category }} &bull; Class: <code>{{ sign.class_name }}</code>
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <span class="conf-pill">{{ sign.confidence_pct }} Confidence</span>
+                                        <div style="margin-top: 0.35rem;">
+                                            <span class="badge-risk {{ sign.risk|lower }}">
+                                                {{ sign.risk }} Risk
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="sign-meaning">
+                                    <strong>Sign Meaning:</strong> {{ sign.meaning }}
+                                </div>
+
+                                <div class="driver-action-box">
+                                    <div class="driver-action-icon">
+                                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="driver-action-text">Recommended Driver Action:</div>
+                                        <div style="font-size: 0.875rem; color: #1E3A8A; margin-top: 2px;">
+                                            {{ sign.action }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% elif data.media_type == 'video' and data.frame_logs|length > 0 %}
+                    <!-- Video Summary Table -->
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Detected Sign</th>
+                                    <th>Confidence</th>
+                                    <th>Risk Level</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for log in data.frame_logs %}
+                                    <tr>
+                                        <td><strong>{{ log.timestamp_str }}</strong></td>
+                                        <td>{{ log.sign_name }}</td>
+                                        <td><span class="conf-pill">{{ log.confidence_pct }}</span></td>
+                                        <td><span class="badge-risk {{ log.risk|lower }}">{{ log.risk }}</span></td>
+                                        <td style="font-size: 0.85rem;">{{ log.action }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <!-- No Detections Alert -->
+                    <div class="sign-card" style="text-align: center; padding: 3rem 1.5rem;">
+                        <svg width="48" height="48" fill="none" stroke="#94A3B8" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom: 1rem;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h4 style="font-weight: 700; font-size: 1.1rem; color: var(--text-main);">No Traffic Signs Detected</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.35rem;">
+                            The YOLOv8 model did not find recognizable traffic signs above the 25% confidence threshold.
+                        </p>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2.5rem;">
+            <a href="{{ url_for('index') }}" class="btn-primary" style="padding: 0.85rem 2.5rem; font-size: 1.05rem;">
+                &larr; Analyze Another Road Image / Video
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        AI-Powered Traffic Sign Assistant &bull; Mini-Project Phase 1 & 2
+    </footer>
+
+</body>
+</html>

@@ -130,6 +130,85 @@
             </form>
         </div>
 
+        <!-- AI TRAFFIC RULES CHATBOT SECTION -->
+        <div class="chatbot-card">
+            <div class="chatbot-header">
+                <div class="chatbot-title-group">
+                    <div class="chatbot-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="chatbot-title">AI Traffic Rules & Road Safety Assistant</h3>
+                        <p class="chatbot-subtitle">Ask questions about Indian road rules, traffic signs, penalties under the Motor Vehicles Act, 1988, and safe driving protocols.</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="chat-context-badge" style="background: #F1F5F9; color: var(--text-muted); border-color: #CBD5E1;">
+                        <span style="width: 8px; height: 8px; background: #2563EB; border-radius: 50%; display: inline-block;"></span>
+                        General Indian Traffic Law Mode
+                    </span>
+                    <button type="button" class="btn-clear-chat" id="chat-clear-btn" title="Reset conversation">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Suggestion Chips -->
+            <div class="suggestion-chips">
+                <button type="button" class="chip" data-prompt="What does a Stop sign mean and what is the penalty for jumping it in India?">
+                    🛑 Stop sign rule & fine in India
+                </button>
+                <button type="button" class="chip" data-prompt="What are the penalties for over-speeding under the Motor Vehicles Act?">
+                    🏎️ Over-speeding fines under MVA 1988
+                </button>
+                <button type="button" class="chip" data-prompt="What is the difference between Stop and Yield signs?">
+                    🔍 Stop vs Yield sign difference
+                </button>
+                <button type="button" class="chip" data-prompt="What is the fine for jumping a red light in India?">
+                    🚦 Red light violation penalty
+                </button>
+                <button type="button" class="chip" data-prompt="What precautions should I take while driving in heavy rain or monsoon?">
+                    🌧️ Monsoon driving precautions
+                </button>
+                <button type="button" class="chip" data-prompt="What should a driver do if a traffic sign is damaged or unclear?">
+                    ⚠️ Damaged or unclear sign protocol
+                </button>
+            </div>
+
+            <!-- Scrollable Message Conversation -->
+            <div class="chat-conversation" id="chat-conversation">
+                <div class="chat-bubble-row assistant">
+                    <div class="chat-avatar assistant">AI</div>
+                    <div class="chat-bubble assistant">
+                        <p>Hello! I am your <strong>AI Traffic Rules & Road Safety Assistant</strong>.</p>
+                        <p>Ask me anything about Indian traffic signs, driving guidelines, hazards, or <strong>verified fines under The Motor Vehicles Act, 1988 (as amended by the 2019 Act)</strong>.</p>
+                        <p><em>Tip: Upload a road image or video above to automatically analyze detected signs!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <form id="chat-form" class="chat-input-bar">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask about Indian traffic signs, road rules, or fines..." autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="btn-send">
+                    <span>Send</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
         <!-- Features Showcase -->
         <div class="features-grid">
             <div class="feature-card">

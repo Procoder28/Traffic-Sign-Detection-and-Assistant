@@ -179,6 +179,113 @@
             </div>
         </div>
 
+        <!-- AI TRAFFIC RULES CHATBOT SECTION -->
+        <div class="chatbot-card">
+            <div class="chatbot-header">
+                <div class="chatbot-title-group">
+                    <div class="chatbot-icon">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="chatbot-title">AI Traffic Rules & Road Safety Assistant</h3>
+                        <p class="chatbot-subtitle">Ask questions about detected signs, Indian traffic laws, fines under the Motor Vehicles Act, or driving precautions.</p>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    {% if data.detections and data.detections|length > 0 %}
+                        <span class="chat-context-badge">
+                            <span style="width: 8px; height: 8px; background: #16A34A; border-radius: 50%; display: inline-block;"></span>
+                            Context: {{ data.detections[0].display_name }} ({{ data.detections[0].confidence_pct }})
+                        </span>
+                    {% elif data.media_type == 'video' and data.frame_logs|length > 0 %}
+                        <span class="chat-context-badge">
+                            <span style="width: 8px; height: 8px; background: #2563EB; border-radius: 50%; display: inline-block;"></span>
+                            Context: Video Analysis ({{ data.frame_logs|length }} log events)
+                        </span>
+                    {% else %}
+                        <span class="chat-context-badge" style="background: #F1F5F9; color: var(--text-muted); border-color: #CBD5E1;">
+                            Context: General Indian Road Rules
+                        </span>
+                    {% endif %}
+                    <button type="button" class="btn-clear-chat" id="chat-clear-btn" title="Reset conversation">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Clear Chat
+                    </button>
+                </div>
+            </div>
+
+            <!-- Suggestion Chips -->
+            <div class="suggestion-chips">
+                {% if data.detections and data.detections|length > 0 %}
+                    <button type="button" class="chip" data-prompt="What does this detected sign mean?">
+                        💡 What does this sign mean?
+                    </button>
+                    <button type="button" class="chip" data-prompt="What should I do as a driver after seeing this sign?">
+                        🚗 What should I do as a driver?
+                    </button>
+                    <button type="button" class="chip" data-prompt="What is the legal fine or penalty for violating this in India?">
+                        ⚖️ What is the legal fine in India?
+                    </button>
+                    <button type="button" class="chip" data-prompt="Which section of the Motor Vehicles Act applies to this?">
+                        📜 Applicable Motor Vehicles Act Section
+                    </button>
+                    <button type="button" class="chip" data-prompt="What should I do if this traffic sign is damaged or unclear?">
+                        ⚠️ What if the sign is damaged or unclear?
+                    </button>
+                {% else %}
+                    <button type="button" class="chip" data-prompt="What is the fine for jumping a red light in India?">
+                        🚦 Red light violation fine in India
+                    </button>
+                    <button type="button" class="chip" data-prompt="What is the difference between Stop and Yield signs?">
+                        🛑 Stop vs Yield sign difference
+                    </button>
+                    <button type="button" class="chip" data-prompt="What are the penalties for over-speeding under the Motor Vehicles Act?">
+                        🏎️ Over-speeding penalties under MVA
+                    </button>
+                    <button type="button" class="chip" data-prompt="What precautions should I take while driving in the monsoon?">
+                        🌧️ Monsoon road safety precautions
+                    </button>
+                {% endif %}
+            </div>
+
+            <!-- Scrollable Message Conversation -->
+            <div class="chat-conversation" id="chat-conversation">
+                <div class="chat-bubble-row assistant">
+                    <div class="chat-avatar assistant">AI</div>
+                    <div class="chat-bubble assistant">
+                        {% if data.detections and data.detections|length > 0 %}
+                            <p>Hello! I am your <strong>AI Traffic Rules & Road Safety Assistant</strong>.</p>
+                            <p>The model detected <strong>{{ data.detections[0].display_name }}</strong> with <strong>{{ data.detections[0].confidence_pct }}</strong> confidence.</p>
+                            <p>You can ask me about this sign's meaning, recommended driver actions, hazards, or <strong>verified penalties under The Motor Vehicles Act, 1988 (2019 Amendment)</strong>.</p>
+                        {% else %}
+                            <p>Hello! I am your <strong>AI Traffic Rules & Road Safety Assistant</strong>.</p>
+                            <p>How can I assist you with Indian traffic signs, road regulations, or statutory fines today?</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Bar -->
+            <form id="chat-form" class="chat-input-bar">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask a question about this sign, Indian road rules, or legal fines..." autocomplete="off">
+                <button type="submit" id="chat-send-btn" class="btn-send">
+                    <span>Send</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
         <div style="text-align: center; margin-top: 2.5rem;">
             <a href="{{ url_for('index') }}" class="btn-primary" style="padding: 0.85rem 2.5rem; font-size: 1.05rem;">
                 &larr; Analyze Another Road Image / Video
@@ -186,10 +293,16 @@
         </div>
     </div>
 
+    <!-- Hidden Context for JS -->
+    <script id="detection-context-data" type="application/json">
+        {{ data | tojson }}
+    </script>
+
     <!-- Footer -->
     <footer>
         AI-Powered Traffic Sign Assistant &bull; Mini-Project Phase 1 & 2
     </footer>
 
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

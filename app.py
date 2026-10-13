@@ -12,6 +12,7 @@ from werkzeug.utils import secure_filename
 from services.detector import TrafficSignDetector
 from services.image_processor import ImageProcessor
 from services.video_processor import VideoProcessor
+from services.chatbot import TrafficChatbot
 
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -40,15 +41,19 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100 MB max upload limit
 detector = None
 image_processor = None
 video_processor = None
+chatbot = None
 
 def get_services():
-    global detector, image_processor, video_processor
+    global detector, image_processor, video_processor, chatbot
     if detector is None:
         logger.info("Initializing YOLOv8 Detector and Services...")
         detector = TrafficSignDetector()
         image_processor = ImageProcessor(detector=detector)
         video_processor = VideoProcessor(detector=detector)
-    return image_processor, video_processor
+    if chatbot is None:
+        logger.info("Initializing AI Traffic Rules Chatbot...")
+        chatbot = TrafficChatbot()
+    return image_processor, video_processor, chatbot
 
 def allowed_file(filename, allowed_extensions):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
@@ -79,7 +84,7 @@ def upload_image():
         logger.info(f"Image uploaded successfully: {input_path}")
 
         try:
-            img_proc, _ = get_services()
+            img_proc, _, _ = get_services()
             result_data = img_proc.process_image(str(input_path))
             return render_template('result.html', data=result_data)
         except Exception as e:
@@ -110,7 +115,7 @@ def upload_video():
         logger.info(f"Video uploaded successfully: {input_path}")
 
         try:
-            _, vid_proc = get_services()
+            _, vid_proc, _ = get_services()
             result_data = vid_proc.process_video(str(input_path))
             return render_template('result.html', data=result_data)
         except Exception as e:
@@ -131,6 +136,33 @@ def health_check():
         "model": "YOLOv8 Pretrained (36 Classes)",
         "phase": "Phase 1 & Phase 2 Active"
     })
+
+
+@app.route('/api/chat', methods=['POST'])
+def chat():
+    """Handles natural language conversation for Indian traffic rules and detected signs."""
+    try:
+        data = request.get_json(force=True) or {}
+        message = data.get('message', '').strip()
+        if not message:
+            return jsonify({'status': 'error', 'error': 'Question cannot be empty.'}), 400
+
+        history = data.get('history', [])
+        context = data.get('context', {})
+
+        _, _, bot = get_services()
+        result = bot.chat(user_message=message, history=history, context=context)
+
+        return jsonify({
+            'status': 'success',
+            'response': result.get('response', ''),
+            'source': result.get('source', 'knowledge_base'),
+            'detected_sign_used': result.get('detected_sign_used', False),
+            'legal_sources': result.get('legal_sources', [])
+        })
+    except Exception as e:
+        logger.error(f"Chatbot endpoint error: {e}", exc_info=True)
+        return jsonify({'status': 'error', 'error': f"Assistant error: {str(e)}"}), 500
 
 
 if __name__ == '__main__':

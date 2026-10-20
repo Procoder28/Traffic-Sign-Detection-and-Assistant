@@ -256,6 +256,74 @@ LEGAL_KNOWLEDGE = {
         "verification_status": "Verified against MV Amendment Act 2019"
     },
 
+    "horn_prohibited": {
+        "title": "Use of Horn in Prohibited Zone (Silence Zone / Noise Violation)",
+        "applicable_rule": "Drivers must not sound the horn in designated silence zones (around hospitals, courts, schools).",
+        "statute": "The Motor Vehicles Act, 1988 (amended 2019)",
+        "sections": "Section 194F(a) (Use of horn in prohibited area) & Section 194F(b)",
+        "offence": "Sounding horn in designated silence area or using multi-toned / harsh pressure horns.",
+        "penalties": {
+            "first_offence": "₹1,000 under Section 194F(a)",
+            "subsequent_offence": "₹2,000 under Section 194F(a)"
+        },
+        "jurisdiction": "Central provision enforced by State Traffic Police and Pollution Control authorities.",
+        "conditions": "Silence zones extend typically within a radius of 100 meters around hospitals, educational institutions, and courts.",
+        "source_title": "India Code - Section 194F MVA 1988",
+        "source_url": INDIA_CODE_URL,
+        "verification_status": "Verified against MV Amendment Act 2019"
+    },
+
+    "axle_load_limit": {
+        "title": "Violation of Axle Load / Gross Vehicle Weight Limit (Overloading)",
+        "applicable_rule": "Vehicles must not exceed the maximum permissible axle weight or registered laden weight.",
+        "statute": "The Motor Vehicles Act, 1988 (amended 2019)",
+        "sections": "Section 113 read with Section 194(1)",
+        "offence": "Driving an overloaded vehicle or exceeding posted bridge/road axle weight capacity.",
+        "penalties": {
+            "base_fine": "₹20,000 standard fine under Section 194(1)",
+            "excess_weight_fine": "Additional ₹2,000 for each excess tonne of overload.",
+            "unloading_requirement": "Vehicle not permitted to proceed until excess load is offloaded at driver's expense."
+        },
+        "jurisdiction": "Transport Department / Highway RTO Enforcement Squads.",
+        "conditions": "Enforced at weighbridges and highway toll plazas.",
+        "source_title": "India Code - Section 113 & 194 MVA 1988",
+        "source_url": INDIA_CODE_URL,
+        "verification_status": "Verified against MV Amendment Act 2019"
+    },
+
+    "height_limit": {
+        "title": "Violation of Maximum Vehicle Height / Width Clearance Limits",
+        "applicable_rule": "Vehicles carrying goods or structures exceeding allowable height/width are prohibited.",
+        "statute": "The Motor Vehicles Act, 1988 (amended 2019)",
+        "sections": "Section 113 read with Section 194(1A)",
+        "offence": "Driving vehicle with dimensions or cargo exceeding permissible clearance limits.",
+        "penalties": {
+            "fine": "₹20,000 under Section 194(1A)"
+        },
+        "jurisdiction": "Traffic Police / RTO",
+        "conditions": "Low clearances at flyovers, rail underpasses, and overhead high-voltage cables.",
+        "source_title": "India Code - Section 194(1A) MVA",
+        "source_url": INDIA_CODE_URL,
+        "verification_status": "Verified"
+    },
+
+    "unguarded_level_crossing": {
+        "title": "Duty of Driver at Unmanned / Unguarded Railway Level Crossing",
+        "applicable_rule": "Mandatory stop and visual verification before crossing unmanned railway track.",
+        "statute": "The Motor Vehicles Act, 1988 (amended 2019)",
+        "sections": "Section 131 (Duty of driver in taking precautions at unmanned railway crossing)",
+        "offence": "Failing to stop vehicle and verify safety before crossing railway tracks.",
+        "penalties": {
+            "standard_violation": "₹500 to ₹1,000 under Section 177 / 177A",
+            "dangerous_driving": "₹1,000 to ₹5,000 and/or imprisonment under Section 184 if crossing recklessly."
+        },
+        "jurisdiction": "Railway Protection Force (RPF) and State Police",
+        "conditions": "Driver or conductor must visually verify that no train or engine is approaching from either side.",
+        "source_title": "India Code - Section 131 & 184 MVA 1988",
+        "source_url": INDIA_CODE_URL,
+        "verification_status": "Verified"
+    },
+
     "general_penalty": {
         "title": "General Penalty for Traffic Sign / Regulation Violation",
         "applicable_rule": "General penalty clause for any road sign or movement violation where no specific penalty is defined.",
@@ -314,6 +382,14 @@ def get_legal_info(sign_key: str) -> dict:
         return LEGAL_KNOWLEDGE["school_zone"]
     if "signal" in key or "light" in key:
         return LEGAL_KNOWLEDGE["traffic_signals"]
+    if "horn" in key:
+        return LEGAL_KNOWLEDGE["horn_prohibited"]
+    if "axle" in key or "load" in key or "overload" in key:
+        return LEGAL_KNOWLEDGE["axle_load_limit"]
+    if "height" in key or "width" in key:
+        return LEGAL_KNOWLEDGE["height_limit"]
+    if "crossing" in key or "rail" in key or "train" in key:
+        return LEGAL_KNOWLEDGE["unguarded_level_crossing"]
 
     # Cautionary / Warning signs fallback (Cautionary signs generally give rise to general duty of care)
     return {

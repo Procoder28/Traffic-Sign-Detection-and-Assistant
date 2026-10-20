@@ -17,10 +17,17 @@ class TrafficSignDetector:
         """
         if model_path is None:
             project_root = Path(__file__).parent.parent
-            model_path = project_root / "models" / "best.pt"
-            
-            # Auto-trigger download if model file missing
-            if not model_path.exists():
+            indian_model_path = project_root / "models" / "best_indian.pt"
+            baseline_model_path = project_root / "models" / "best.pt"
+
+            if indian_model_path.exists() and indian_model_path.stat().st_size > 1000000:
+                logger.info(f"Discovered fine-tuned Indian Traffic Sign Model: {indian_model_path}")
+                model_path = indian_model_path
+            elif baseline_model_path.exists() and baseline_model_path.stat().st_size > 1000000:
+                logger.info(f"Loading baseline traffic sign model: {baseline_model_path}")
+                model_path = baseline_model_path
+            else:
+                # Auto-trigger download if model file missing
                 logger.info("Model file missing. Running automatic downloader...")
                 try:
                     from download_model import download_pretrained_model
